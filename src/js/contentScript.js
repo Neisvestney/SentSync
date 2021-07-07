@@ -8,15 +8,40 @@ const port = chrome.extension.connect({
     name: "Communication"
 });
 
+let fromOutside = false;
+function isOutside() {
+    if (fromOutside) {
+        fromOutside = false;
+        return true
+    } else {
+        return false
+    }
+}
+
+function post(data) {
+    if (!isOutside()) port.postMessage(data);
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log('Received action: ', message);
+    log('Received action: ', message);
 
     if (video) {
+        fromOutside = true;
         switch (message.action) {
             case 'pause':
                 log('Video paused');
+
+                if (message.at) {
+                    function onPause() {
+                        fromOutside = true;
+                        video.currentTime = parseFloat(message.at);
+                        video.removeEventListener('pause', onPause);
+                    }
+
+                    video.addEventListener('pause', onPause);
+                }
+
                 video.pause();
-                if (message.at) video.currentTime = parseFloat(message.at);
                 break;
             case 'play':
                 log('Video played');
@@ -38,9 +63,9 @@ $(document).ready(() => {
         if (!video) {
             video = $('video.fp-engine.hlsjs-engine')[0];
             if (video) {
-                video.addEventListener('pause', (e) => port.postMessage({action: 'pause', at: video.currentTime, from: 'content'}));
-                video.addEventListener('play', (e) => port.postMessage({action: 'play', from: 'content'}));
-                video.addEventListener('seeked', (e) => port.postMessage({action: 'seek', time: video.currentTime, from: 'content'}));
+                video.addEventListener('pause', (e) => post({action: 'pause', at: video.currentTime, from: 'content'}));
+                video.addEventListener('play', (e) => post({action: 'play', from: 'content'}));
+                video.addEventListener('seeked', (e) => post({action: 'seek', to: video.currentTime, from: 'content'}));
                 log('Video founded!', video);
             }
         }
