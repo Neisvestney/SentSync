@@ -1,6 +1,92 @@
+$background: #212121;
+$primary: #ee9b00;
+$secondary: #ffffff;
+$danger: #e63946;
+
+@font-face {
+  font-family: "RussoOne";
+  src: url(../assets/RussoOne-Regular.ttf)
+}
+
+* {
+  font-family: "RussoOne", system-ui, sans-serif;
+}
+
 body {
-  width: 200px;
-  height: 300px;
-  background: #212121;
-  color: white;
+  width: 300px;
+  //height: 400px;
+  background: $background;
+  color: $primary;
+}
+
+h1 {
+  padding-left: 10px;
+  font-weight: normal;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+
+  a {
+    margin-left: 5px;
+    color: $secondary;
+  }
+}
+
+.form-group {
+  position: relative;
+  padding: 10px;
+  border: 2px solid $primary;
+  margin: 10px 10px 20px;
+
+  label {
+    position: absolute;
+    top: -8px;
+    left: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    color: $primary;
+    background-color: $background;
+  }
+
+  input, p {
+    width: calc(100% - 10px);
+    margin: 0;
+    padding: 1px 2px;
+    height: 16px;
+    border: none;
+    background: none;
+    color: $primary;
+    font-weight: normal;
+    font-size: 14px;
+
+    &:focus-visible {
+      border: none;
+      outline: none;
+    }
+  }
+
+  button {
+    position: absolute;
+    bottom: -10px;
+    right: 5px;
+    border: 2px solid $primary;
+    border-radius: 0;
+    background: $background;
+    color: $primary;
+
+    &:hover {
+      color: $secondary;
+
+      &.danger {
+        color: $danger;
+      }
+    }
+
+    &:active {
+      background: $primary;
+    }
+  }
 }
