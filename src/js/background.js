@@ -23,7 +23,6 @@ let socket;
 function onSocketOpen(e) {
     log("Connected");
     data.isConnected = true;
-    console.log(popupPort);
     if (popupPort) popupPort.postMessage({data: data});
     sendToServer({user: data.username});
 }
@@ -32,6 +31,12 @@ function onSocketMessage(event) {
     log(`Got update from server: ${event.data}`);
     let data = JSON.parse(event.data);
     if (data.action) handleControl(data.action);
+}
+
+function onSocketClose(event) {
+    log(`Disconnected from server`);
+    data.isConnected = false;
+    if (popupPort) popupPort.postMessage({data: data});
 }
 
 function sendToServer(data) {
@@ -58,7 +63,12 @@ chrome.extension.onConnect.addListener(function(port) {
                 socket = new WebSocket(`ws://127.0.0.1:8000/ws/room/${data.room}/`);
                 socket.onopen = onSocketOpen;
                 socket.onmessage = onSocketMessage;
+                socket.onclose = onSocketClose;
                 port.postMessage("OK");
+                break;
+            case 'disconnect':
+                socket.close();
+                break;
             case 'getData':
                 port.postMessage({data: data});
                 popupPort = port;

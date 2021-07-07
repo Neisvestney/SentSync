@@ -1,15 +1,23 @@
 <template>
   <div id="main">
     <input v-model="username" placeholder="Ваше имя">
-    <input v-model="room" placeholder="Комната">
-    <button @click="post({action: 'connect'})">Соедениться</button>
-    <p v-if="isConnected">Соеденено</p>
-    <p v-else>Подключитесь для начала</p>
+    <div v-if="!isConnected" class="connection">
+      <input v-model="room" placeholder="Комната">
+      <button @click="post({action: 'connect'})">Соедениться</button>
+
+    </div>
+    <div v-else class="connection">
+      <p>Код комнаты: {{ room }}</p>
+      <p>Соеденено</p>
+      <button @click="post({action: 'disconnect'})">Отключиться</button>
+    </div>
     <br>
-    <button @click="post({action: 'pause'})">Пауза</button>
-    <button @click="post({action: 'play'})">Продолжить</button>
-    <input type="number" v-model="seekTo" placeholder="отредактируй меня">
-    <button @click="post({action: 'seek', to: seekTo})">Перейти</button>
+    <div class="controls">
+      <button @click="post({action: 'pause'})">Пауза</button>
+      <button @click="post({action: 'play'})">Продолжить</button>
+      <input type="number" v-model="seekTo" placeholder="отредактируй меня">
+      <button @click="post({action: 'seek', to: seekTo})">Перейти</button>
+    </div>
   </div>
 </template>
 
