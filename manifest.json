@@ -24,5 +24,5 @@
         }
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; img-src * data: 'self' 'unsafe-eval'",
-    "permissions": ["tabs", "<all_urls>", "activeTab"]
+    "permissions": ["tabs", "<all_urls>", "activeTab", "storage"]
 }

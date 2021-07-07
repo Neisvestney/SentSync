@@ -1,5 +1,10 @@
 import {log, error, warn} from './log'
 
+Object.filter = (obj, predicate) =>
+    Object.keys(obj)
+        .filter( key => predicate(obj, key) )
+        .reduce( (res, key) => (res[key] = obj[key], res), {} );
+
 let data = {
     username: 'User' + Math.random(),
     room: '',
@@ -9,7 +14,20 @@ let data = {
     error: null
 };
 
+let notToSave = ['isConnected', 'isConnecting', 'isConnecting'];
+
 let popupPort;
+
+function setData(newData, sentToPopup = true) {
+    data = {...data, ...newData};
+    log('New data saved: ', data);
+    chrome.storage.sync.set(Object.filter(data, (o, k) => !notToSave.includes(k)));
+    if (popupPort && sentToPopup) popupPort.postMessage({data: data});
+}
+
+chrome.storage.sync.get(Object.keys(data), function(result) {
+    setData(result);
+});
 
 function sendToContent(msg) {
     return new Promise((resolve, reject) => {
@@ -25,10 +43,7 @@ let socket;
 
 function onSocketOpen(e) {
     log("Connected");
-    data.isConnected = true;
-    data.isConnecting = false;
-    data.error = null;
-    if (popupPort) popupPort.postMessage({data: data});
+    setData({isConnected: true, isConnecting: false, error: null});
     sendToServer({user: data.username});
 }
 
@@ -40,16 +55,12 @@ function onSocketMessage(event) {
 
 function onSocketClose(event) {
     warn(`Disconnected from server`, event);
-    data.isConnected = false;
-    data.isConnecting = false;
-    data.error = event.code === 1000 ? null : 'network';
-    if (popupPort) popupPort.postMessage({data: data});
+    setData({isConnected: false, isConnecting: false, error: event.code === 1000 ? null : 'network'});
 }
 
 function onSocketError(event) {
     error(`Websocket error!`, event);
-    data.isConnected = false;
-    if (popupPort) popupPort.postMessage({data: data});
+    setData({isConnected: false});
 }
 
 function sendToServer(data) {
@@ -73,9 +84,9 @@ chrome.extension.onConnect.addListener(function(port) {
                 handleControl(msg);
                 break;
             case 'connect':
-                data.isConnecting = true;
-                data.error = null;
+                setData({isConnecting: true, error: null}, false);
                 port.postMessage({data: data});
+
                 socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/`);
                 socket.onopen = onSocketOpen;
                 socket.onmessage = onSocketMessage;
@@ -94,7 +105,7 @@ chrome.extension.onConnect.addListener(function(port) {
 
                 if (newData.username !== data.username && data.isConnected) sendToServer({user: newData.username});
 
-                data = newData;
+                setData(newData, false);
                 port.postMessage("OK");
                 break;
         }
