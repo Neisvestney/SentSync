@@ -11,7 +11,7 @@
       <div class="form-group">
         <label>Комната</label>
         <input v-model="room">
-        <button @click="post({action: 'connect'})">Соедениться</button>
+        <button :disabled="isConnecting" @click="post({action: 'connect'})">Соедениться</button>
       </div>
 
     </div>
@@ -21,14 +21,23 @@
         <p>{{ room }}</p>
         <button @click="post({action: 'disconnect'})" class="danger">Отключиться</button>
       </div>
-
     </div>
+    <p v-if="error === 'network'" class="danger">Ошибка подключения</p>
     <br>
     <!--    <div class="controls">-->
     <!--      <button @click="post({action: 'pause'})">Пауза</button>-->
     <!--      <button @click="post({action: 'play'})">Продолжить</button>-->
     <!--    </div>-->
-    <span class="footer">Made by <a target="_blank" href="https://github.com/Neisvestney">Neisvestney</a></span>
+    <div v-if="more" class="more">
+      <div class="form-group">
+        <label>Сервер</label>
+        <input v-model="serverUrl">
+      </div>
+    </div>
+    <div class="footer">
+      <a href="#" @click="more = !more">Настройки</a>
+      <span class="credits">Made by <a target="_blank" href="https://github.com/Neisvestney">Neisvestney</a></span>
+    </div>
   </div>
 </template>
 
@@ -44,10 +53,15 @@ export default {
 
     return {
       port: port,
+      more: false,
+
       seekTo: 0,
       username: null,
       room: null,
-      isConnected: false
+      serverUrl: null,
+      isConnected: false,
+      isConnecting: false,
+      error: null
     }
   },
   methods: {
@@ -63,7 +77,11 @@ export default {
     room: function (newRoom, old) {
       if (newRoom)
         this.post({action: 'setData', data: {room: newRoom}})
-    }
+    },
+    serverUrl: function (newUrl, old) {
+      if (newUrl)
+        this.post({action: 'setData', data: {serverUrl: newUrl}})
+    },
   },
   beforeMount: function () {
     this.port.onMessage.addListener((msg) => {
@@ -71,7 +89,10 @@ export default {
       if (msg.data) {
         this.username = msg.data.username;
         this.room = msg.data.room;
+        this.serverUrl = msg.data.serverUrl;
         this.isConnected = msg.data.isConnected;
+        this.isConnecting = msg.data.isConnecting;
+        this.error = msg.data.error;
       }
     });
     this.post({action: 'getData'})

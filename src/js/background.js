@@ -1,9 +1,12 @@
-const {log} = require("./log");
+import {log, error, warn} from './log'
 
 let data = {
     username: 'User' + Math.random(),
     room: '',
-    isConnected: false
+    serverUrl: 'ws://senteristeam.ru:8003',
+    isConnected: false,
+    isConnecting: false,
+    error: null
 };
 
 let popupPort;
@@ -23,6 +26,8 @@ let socket;
 function onSocketOpen(e) {
     log("Connected");
     data.isConnected = true;
+    data.isConnecting = false;
+    data.error = null;
     if (popupPort) popupPort.postMessage({data: data});
     sendToServer({user: data.username});
 }
@@ -34,7 +39,15 @@ function onSocketMessage(event) {
 }
 
 function onSocketClose(event) {
-    log(`Disconnected from server`);
+    warn(`Disconnected from server`, event);
+    data.isConnected = false;
+    data.isConnecting = false;
+    data.error = event.code === 1000 ? null : 'network';
+    if (popupPort) popupPort.postMessage({data: data});
+}
+
+function onSocketError(event) {
+    error(`Websocket error!`, event);
     data.isConnected = false;
     if (popupPort) popupPort.postMessage({data: data});
 }
@@ -60,11 +73,14 @@ chrome.extension.onConnect.addListener(function(port) {
                 handleControl(msg);
                 break;
             case 'connect':
-                socket = new WebSocket(`ws://127.0.0.1:8000/ws/room/${data.room}/`);
+                data.isConnecting = true;
+                data.error = null;
+                port.postMessage({data: data});
+                socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/`);
                 socket.onopen = onSocketOpen;
                 socket.onmessage = onSocketMessage;
                 socket.onclose = onSocketClose;
-                port.postMessage("OK");
+                socket.onerror = onSocketError;
                 break;
             case 'disconnect':
                 socket.close();

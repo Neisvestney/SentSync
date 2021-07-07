@@ -19,8 +19,8 @@
         "webpack-cli": "^4.7.2"
     },
     "scripts": {
-        "start": "webpack --watch",
-        "build": "webpack"
+        "start": "webpack --watch --progress",
+        "build": "webpack --progress"
     },
     "nodemonConfig": {
         "ignore": [

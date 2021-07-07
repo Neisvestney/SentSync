@@ -1,6 +1,7 @@
 $background: #212121;
 $primary: #ee9b00;
 $secondary: #ffffff;
+$disabled: #6b6b6b;
 $danger: #e63946;
 
 @font-face {
@@ -19,22 +20,36 @@ body {
   color: $primary;
 }
 
+.offsets {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 h1 {
-  padding-left: 10px;
+  @extend .offsets;
   font-weight: normal;
 }
 
-.footer {
-  display: flex;
-  justify-content: flex-end;
+a {
+  color: $secondary;
+}
 
-  a {
-    margin-left: 5px;
-    color: $secondary;
-  }
+p.danger {
+  @extend .offsets;
+  padding: 10px;
+  font-size: 14px;
+  border: 2px solid $danger;
+  color: $danger;
+}
+
+.footer {
+  @extend .offsets;
+  display: flex;
+  justify-content: space-between;
 }
 
 .form-group {
+  @extend .offsets;
   position: relative;
   padding: 10px;
   border: 2px solid $primary;
@@ -87,6 +102,10 @@ h1 {
 
     &:active {
       background: $primary;
+    }
+
+    &:disabled {
+      color: $disabled;
     }
   }
 }
