@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EasyI18nSettings">
+    <option name="localesPath" value="D:\Programming\JS\SentSync\src\locales" />
+    <option name="previewLocale" value="en-US" />
+  </component>
   <component name="WebPackConfiguration">
     <option name="mode" value="MANUAL" />
     <option name="path" value="$PROJECT_DIR$/webpack.config.js" />

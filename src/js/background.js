@@ -8,7 +8,7 @@ Object.filter = (obj, predicate) =>
 let data = {
     username: 'User' + Math.random(),
     room: '',
-    serverUrl: 'ws://senteristeam.ru:8003',
+    serverUrl: 'wss://sentsync.senteristeam.ru',
     isConnected: false,
     isConnecting: false,
     error: null

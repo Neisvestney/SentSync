@@ -1,0 +1,19 @@
+{
+  "error": {
+    "network": "Connection error"
+  },
+  "madeby": "Made by",
+  "more": {
+    "server": "Server",
+    "settings": "Settings"
+  },
+  "network": {
+    "connect": "Connect",
+    "disconnect": "Disconnect"
+  },
+  "room": {
+    "code": "Room code",
+    "enter": "Room"
+  },
+  "username": "Username"
+}

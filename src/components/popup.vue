@@ -2,27 +2,27 @@
   <div id="main">
     <h1>SentSync</h1>
     <div class="form-group">
-      <label>Имя</label>
+      <label>{{ $t("username") }}</label>
       <input v-model="username"/>
       <!--      <button>Сохранить</button>-->
     </div>
 
     <div v-if="!isConnected" class="connection">
       <div class="form-group">
-        <label>Комната</label>
+        <label>{{ $t("room.enter") }}</label>
         <input v-model="room">
-        <button :disabled="isConnecting" @click="post({action: 'connect'})">Соедениться</button>
+        <button :disabled="isConnecting" @click="post({action: 'connect'})">{{ $t("network.connect") }}</button>
       </div>
 
     </div>
     <div v-else class="connection">
       <div class="form-group">
-        <label>Код комнаты</label>
+        <label>{{ $t("room.code") }}</label>
         <p>{{ room }}</p>
-        <button @click="post({action: 'disconnect'})" class="danger">Отключиться</button>
+        <button @click="post({action: 'disconnect'})" class="danger">{{ $t("network.disconnect") }}</button>
       </div>
     </div>
-    <p v-if="error === 'network'" class="danger">Ошибка подключения</p>
+    <p v-if="error === 'network'" class="danger">{{ $t("error.network") }}</p>
     <br>
     <!--    <div class="controls">-->
     <!--      <button @click="post({action: 'pause'})">Пауза</button>-->
@@ -30,13 +30,13 @@
     <!--    </div>-->
     <div v-if="more" class="more">
       <div class="form-group">
-        <label>Сервер</label>
+        <label>{{ $t("more.server") }}</label>
         <input v-model="serverUrl">
       </div>
     </div>
     <div class="footer">
-      <a href="#" @click="more = !more">Настройки</a>
-      <span class="credits">Made by <a target="_blank" href="https://github.com/Neisvestney">Neisvestney</a></span>
+      <a href="#" @click="more = !more">{{ $t("more.settings") }}</a>
+      <span class="credits">{{ $t("madeby") }} <a target="_blank" href="https://github.com/Neisvestney">Neisvestney</a></span>
     </div>
   </div>
 </template>

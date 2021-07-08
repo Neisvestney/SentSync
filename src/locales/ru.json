@@ -1,0 +1,19 @@
+{
+  "error": {
+    "network": "Ошибка подключения"
+  },
+  "madeby": "Made by",
+  "more": {
+    "server": "Сервер",
+    "settings": "Настройки"
+  },
+  "network": {
+    "connect": "Соедениться",
+    "disconnect": "Отключться"
+  },
+  "room": {
+    "code": "Код комнаты",
+    "enter": "Комната"
+  },
+  "username": "Имя"
+}
