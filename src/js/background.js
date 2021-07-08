@@ -11,10 +11,11 @@ let data = {
     serverUrl: 'wss://sentsync.senteristeam.ru',
     isConnected: false,
     isConnecting: false,
-    error: null
+    error: null,
+    selectedTab: null,
 };
 
-let notToSave = ['isConnected', 'isConnecting', 'isConnecting'];
+let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab'];
 
 let popupPort;
 
@@ -31,11 +32,13 @@ chrome.storage.sync.get(Object.keys(data), function(result) {
 
 function sendToContent(msg) {
     return new Promise((resolve, reject) => {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, msg, function(response){
+        if (data.selectedTab) {
+            chrome.tabs.sendMessage(data.selectedTab.id, msg, function (response) {
                 resolve(response);
             });
-        });
+        } else {
+            reject('notSelectedTab');
+        }
     });
 }
 
@@ -95,6 +98,11 @@ chrome.extension.onConnect.addListener(function(port) {
                 break;
             case 'disconnect':
                 socket.close();
+                break;
+            case 'selectCurrentTab':
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    setData({selectedTab: tabs[0]})
+                });
                 break;
             case 'getData':
                 port.postMessage({data: data});

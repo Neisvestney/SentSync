@@ -18,7 +18,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://*.animego.org/*", "https://*.kodik.info/*"],
+            "matches": ["https://*/*", "http://*/*"],
             "js": ["contentScript.js"],
             "all_frames": true
         }

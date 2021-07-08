@@ -76,6 +76,9 @@ p.danger {
     color: $primary;
     font-weight: normal;
     font-size: 14px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 
     &:focus-visible {
       border: none;

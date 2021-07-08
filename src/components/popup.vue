@@ -6,6 +6,12 @@
       <input v-model="username"/>
       <!--      <button>Сохранить</button>-->
     </div>
+    <div class="form-group">
+      <label>{{ $t("tabs.tab") }}</label>
+      <p v-if="selectedTab">{{ selectedTab.title }}</p>
+      <p v-else>{{ $t("tabs.notselected") }}</p>
+      <button @click="post({action: 'selectCurrentTab'})">{{ $t("tabs.select") }}</button>
+    </div>
 
     <div v-if="!isConnected" class="connection">
       <div class="form-group">
@@ -13,7 +19,6 @@
         <input v-model="room">
         <button :disabled="isConnecting" @click="post({action: 'connect'})">{{ $t("network.connect") }}</button>
       </div>
-
     </div>
     <div v-else class="connection">
       <div class="form-group">
@@ -61,7 +66,8 @@ export default {
       serverUrl: null,
       isConnected: false,
       isConnecting: false,
-      error: null
+      error: null,
+      selectedTab: null,
     }
   },
   methods: {
@@ -93,6 +99,7 @@ export default {
         this.isConnected = msg.data.isConnected;
         this.isConnecting = msg.data.isConnecting;
         this.error = msg.data.error;
+        this.selectedTab = msg.data.selectedTab;
       }
     });
     this.post({action: 'getData'})

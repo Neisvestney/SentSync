@@ -23,6 +23,7 @@ function post(data) {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    sendResponse('OK');
     log('Received action: ', message);
 
     if (video) {
@@ -53,15 +54,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 break;
         }
     }
-    // console.log($('.fp-x-play')[0].click())
-
-    sendResponse('OK');
 });
 
 $(document).ready(() => {
     $("body").bind("DOMSubtreeModified", () => {
         if (!video) {
-            video = $('video.fp-engine.hlsjs-engine')[0];
+            video = $('video')[0];
             if (video) {
                 video.addEventListener('pause', (e) => post({action: 'pause', at: video.currentTime, from: 'content'}));
                 video.addEventListener('play', (e) => post({action: 'play', from: 'content'}));

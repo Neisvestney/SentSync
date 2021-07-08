@@ -15,5 +15,10 @@
     "code": "Room code",
     "enter": "Room"
   },
+  "tabs": {
+    "notselected": "Not selected",
+    "select": "Select current",
+    "tab": "Tab"
+  },
   "username": "Username"
 }
