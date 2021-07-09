@@ -19,6 +19,8 @@ let data = {
 
 let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab', 'userId'];
 
+
+
 let popupPort;
 
 function setData(newData, sentToPopup = true) {
@@ -27,8 +29,11 @@ function setData(newData, sentToPopup = true) {
 
     data = {...data, ...newData};
     log('New data saved: ', data);
-    chrome.storage.sync.set(Object.filter(data, (o, k) => !notToSave.includes(k))); // Sending data to storage
+    chrome.storage.sync.set(Object.filter(data, (o, k) => !notToSave.includes(k))); // Saving data to storage
     if (popupPort && sentToPopup) popupPort.postMessage({data: data}); // Sending data to popup
+
+    if (data.isConnected && data.selectedTab) chrome.browserAction.setIcon({path: '16x16.png'}); // Changing icon
+    else chrome.browserAction.setIcon({path: '16x16_disabled.png'});
 }
 
 chrome.storage.sync.get(Object.keys(data), function(result) {
