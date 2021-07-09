@@ -86,6 +86,20 @@ p.danger {
     }
   }
 
+  ul {
+    padding-left: 10px;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    li {
+      padding-left: 10px;
+    }
+
+    li::marker {
+      content: '■';
+    }
+  }
+
   button {
     position: absolute;
     bottom: -10px;

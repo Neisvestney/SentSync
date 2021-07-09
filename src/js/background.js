@@ -7,23 +7,28 @@ Object.filter = (obj, predicate) =>
 
 let data = {
     username: 'User' + Math.random(),
+    userId: null,
     room: '',
     serverUrl: 'wss://sentsync.senteristeam.ru',
     isConnected: false,
     isConnecting: false,
     error: null,
     selectedTab: null,
+    usersList: [],
 };
 
-let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab'];
+let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab', 'userId'];
 
 let popupPort;
 
 function setData(newData, sentToPopup = true) {
+    if (newData.username !== data.username && data.isConnected && newData.username)
+        sendToServer({cmd: {action: 'setData', username: newData.username}});
+
     data = {...data, ...newData};
     log('New data saved: ', data);
-    chrome.storage.sync.set(Object.filter(data, (o, k) => !notToSave.includes(k)));
-    if (popupPort && sentToPopup) popupPort.postMessage({data: data});
+    chrome.storage.sync.set(Object.filter(data, (o, k) => !notToSave.includes(k))); // Sending data to storage
+    if (popupPort && sentToPopup) popupPort.postMessage({data: data}); // Sending data to popup
 }
 
 chrome.storage.sync.get(Object.keys(data), function(result) {
@@ -31,6 +36,7 @@ chrome.storage.sync.get(Object.keys(data), function(result) {
 });
 
 function sendToContent(msg) {
+    log('Sending message to contend', msg);
     return new Promise((resolve, reject) => {
         if (data.selectedTab) {
             chrome.tabs.sendMessage(data.selectedTab.id, msg, function (response) {
@@ -47,18 +53,20 @@ let socket;
 function onSocketOpen(e) {
     log("Connected");
     setData({isConnected: true, isConnecting: false, error: null});
-    sendToServer({user: data.username});
+    sendToServer({cmd: {action: 'setData', username: data.username}});
 }
 
 function onSocketMessage(event) {
     log(`Got update from server: ${event.data}`);
-    let data = JSON.parse(event.data);
-    if (data.action) handleControl(data.action);
+    let d = JSON.parse(event.data);
+
+    if (d.action && d.sender.id !== data.userId) handleControl(d.action);
+    if (d.data) setData({userId: d.data.you.id, usersList: d.data.room.users})
 }
 
 function onSocketClose(event) {
     warn(`Disconnected from server`, event);
-    setData({isConnected: false, isConnecting: false, error: event.code === 1000 ? null : 'network'});
+    setData({userId: null, isConnected: false, isConnecting: false, error: event.code === 1000 ? null : 'network', usersList: []});
 }
 
 function onSocketError(event) {
@@ -127,8 +135,6 @@ chrome.extension.onConnect.addListener(function(port) {
                 break;
             case 'setData':
                 let newData = {...data, ...msg.data};
-
-                if (newData.username !== data.username && data.isConnected) sendToServer({user: newData.username});
 
                 setData(newData, false);
                 port.postMessage("OK");

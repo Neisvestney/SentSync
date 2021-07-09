@@ -26,6 +26,15 @@
         <p>{{ room }}</p>
         <button @click="post({action: 'disconnect'})" class="danger">{{ $t("network.disconnect") }}</button>
       </div>
+      <div v-if="usersList.length > 0" class="form-group">
+        <label>{{ $t("users.title") }}</label>
+        <ul>
+          <li v-for="user in usersList">{{ user.username }}
+            <span :title="$t('users.you')" v-if="user.id === userId">⍚</span>
+            <span :title="$t('users.host')" v-if="user.isHost">☆</span>
+          </li>
+        </ul>
+      </div>
     </div>
     <p v-if="error === 'network'" class="danger">{{ $t("error.network") }}</p>
     <br>
@@ -62,12 +71,14 @@ export default {
 
       seekTo: 0,
       username: null,
+      userId: null,
       room: null,
       serverUrl: null,
       isConnected: false,
       isConnecting: false,
       error: null,
       selectedTab: null,
+      usersList: []
     }
   },
   methods: {
@@ -94,12 +105,14 @@ export default {
       console.log(msg);
       if (msg.data) {
         this.username = msg.data.username;
+        this.userId = msg.data.userId;
         this.room = msg.data.room;
         this.serverUrl = msg.data.serverUrl;
         this.isConnected = msg.data.isConnected;
         this.isConnecting = msg.data.isConnecting;
         this.error = msg.data.error;
         this.selectedTab = msg.data.selectedTab;
+        this.usersList = msg.data.usersList;
       }
     });
     this.post({action: 'getData'})

@@ -20,5 +20,10 @@
     "select": "Select current",
     "tab": "Tab"
   },
-  "username": "Username"
+  "username": "Username",
+  "users": {
+    "host": "It`s host",
+    "title": "Users list",
+    "you": "It`s you"
+  }
 }
