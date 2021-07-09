@@ -67,7 +67,9 @@ function onSocketError(event) {
 }
 
 function sendToServer(data) {
-    return socket.send(JSON.stringify(data));
+    log("Sending data to server...", data);
+    if (socket && socket.readyState === WebSocket.OPEN)
+        socket.send(JSON.stringify(data));
 }
 
 function handleControl(msg) {
@@ -76,9 +78,24 @@ function handleControl(msg) {
     delete msg.from;
 }
 
+chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse){
+    sendResponse('OK');
+
+    log(`Received message from content (tab id: ${sender.tab.id}): `, msg);
+    if (data.selectedTab && sender.tab.id === data.selectedTab.id)  {
+        switch (msg.action) {
+            case 'pause':
+            case 'play':
+            case 'seek':
+                handleControl(msg);
+                break;
+        }
+    }
+});
+
 chrome.extension.onConnect.addListener(function(port) {
     port.onMessage.addListener(function(msg) {
-        log('Received action: ', msg.action);
+        log('Received message: ', msg);
         switch (msg.action) {
             case 'pause':
             case 'play':

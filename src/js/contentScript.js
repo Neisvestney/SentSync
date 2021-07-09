@@ -19,7 +19,7 @@ function isOutside() {
 }
 
 function post(data) {
-    if (!isOutside()) port.postMessage(data);
+    if (!isOutside()) chrome.runtime.sendMessage(data);
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
