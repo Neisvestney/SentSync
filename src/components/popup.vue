@@ -47,6 +47,13 @@
         <label>{{ $t("more.server") }}</label>
         <input v-model="serverUrl">
       </div>
+      <div class="form-group">
+        <label>{{ $t("more.notifications.title") }}</label>
+        <label role="checkbox">
+          <input type="checkbox" id="showNotifications" v-model="showNotifications">
+          <span>{{ $t("more.notifications.show") }}</span>
+        </label>
+      </div>
     </div>
     <div class="footer">
       <a href="#" @click="more = !more">{{ $t("more.settings") }}</a>
@@ -78,7 +85,9 @@ export default {
       isConnecting: false,
       error: null,
       selectedTab: null,
-      usersList: []
+      usersList: [],
+
+      showNotifications: true,
     }
   },
   methods: {
@@ -99,6 +108,9 @@ export default {
       if (newUrl)
         this.post({action: 'setData', data: {serverUrl: newUrl}})
     },
+    showNotifications: function (newSet, old) {
+      this.post({action: 'setData', data: {showNotifications: newSet}})
+    },
   },
   beforeMount: function () {
     this.port.onMessage.addListener((msg) => {
@@ -113,6 +125,7 @@ export default {
         this.error = msg.data.error;
         this.selectedTab = msg.data.selectedTab;
         this.usersList = msg.data.usersList;
+        this.showNotifications = msg.data.showNotifications;
       }
     });
     this.post({action: 'getData'})

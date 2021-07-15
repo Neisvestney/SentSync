@@ -1,0 +1,47 @@
+{
+  "extensionDescription": {
+    "message": "Расширение для просмотра видосиков с друзьями.",
+    "description": "Description of the extension."
+  },
+
+  "notificationOnPlay": {
+    "message": "$PERSON$ начал проигрывать видео",
+    "description": "On play",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      }
+    }
+  },
+
+  "notificationOnPause": {
+    "message": "$PERSON$ остановил видео на $AT$",
+    "description": "On play",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      },
+      "at" : {
+        "content" : "$2",
+        "example" : "01:00"
+      }
+    }
+  },
+
+  "notificationOnSeek": {
+    "message": "$PERSON$ перемотал видео на $TO$",
+    "description": "On play",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      },
+      "to" : {
+        "content" : "$2",
+        "example" : "01:00"
+      }
+    }
+  }
+}

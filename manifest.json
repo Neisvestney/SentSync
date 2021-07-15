@@ -1,8 +1,9 @@
 {
     "manifest_version": 2,
-    "name": "SentSync",
-    "version": "0.0.1",
-    "description": "Chrome extension for syncing video progress with your friends",
+    "version": "0.5.0",
+    "name": "__MSG_extensionName__",
+    "description": "__MSG_extensionDescription__",
+    "default_locale": "en_US",
     "icons": {
         "16": "16x16_disabled.png",
         "48": "48x48.png",
@@ -24,5 +25,5 @@
         }
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; img-src * data: 'self' 'unsafe-eval'",
-    "permissions": ["tabs", "<all_urls>", "activeTab", "storage"]
+    "permissions": ["tabs", "<all_urls>", "activeTab", "storage", "notifications"]
 }

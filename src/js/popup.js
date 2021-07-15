@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n'
 import Popup from '../components/popup.vue';
-import ru from "../locales/ru.json";
-import us from "../locales/en-US.json";
+import ru from "../locales/popup/ru.json";
+import us from "../locales/popup/en-US.json";
 
 
 

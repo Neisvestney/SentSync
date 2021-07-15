@@ -4,6 +4,10 @@
   },
   "madeby": "Made by",
   "more": {
+    "notifications": {
+      "show": "Показывать",
+      "title": "Уведомления"
+    },
     "server": "Сервер",
     "settings": "Настройки"
   },

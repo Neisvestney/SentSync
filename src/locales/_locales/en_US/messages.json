@@ -1,0 +1,57 @@
+{
+  "extensionName": {
+    "message": "SentSync",
+    "description": "Name of the extension."
+  },
+
+  "extensionDescription": {
+    "message": "Chrome extension for syncing video progress with your friends.",
+    "description": "Description of the extension."
+  },
+
+  "notificationTitle": {
+    "message": "SentSync",
+    "description": "Title of the click notification."
+  },
+
+  "notificationOnPlay": {
+    "message": "$PERSON$ started playing video",
+    "description": "On play",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      }
+    }
+  },
+
+  "notificationOnPause": {
+    "message": "$PERSON$ pause video at $AT$",
+    "description": "On play",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      },
+      "at" : {
+        "content" : "$2",
+        "example" : "01:00"
+      }
+    }
+  },
+
+  "notificationOnSeek": {
+    "message": "$PERSON$ seeked video to $TO$",
+    "description": "On play",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      },
+      "to" : {
+        "content" : "$2",
+        "example" : "01:00"
+      }
+    }
+  }
+}

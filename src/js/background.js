@@ -15,11 +15,11 @@ let data = {
     error: null,
     selectedTab: null,
     usersList: [],
+
+    showNotifications: true,
 };
 
 let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab', 'userId'];
-
-
 
 let popupPort;
 
@@ -53,6 +53,20 @@ function sendToContent(msg) {
     });
 }
 
+function noification(msg, addition) {
+    if (data.showNotifications) {
+        chrome.notifications.create({
+            title: 'SentSync',
+            message: chrome.i18n.getMessage(msg, addition),
+            iconUrl: '/128x128.png',
+            type: 'basic',
+            silent: true
+        }, function (id) {
+            setTimeout(() => chrome.notifications.clear(id), 2000)
+        });
+    }
+}
+
 let socket;
 
 function onSocketOpen(e) {
@@ -65,7 +79,7 @@ function onSocketMessage(event) {
     log(`Got update from server: ${event.data}`);
     let d = JSON.parse(event.data);
 
-    if (d.action && d.sender.id !== data.userId) handleControl(d.action);
+    if (d.action && d.sender.id !== data.userId) handleControl(d.action, d.sender);
     if (d.data) setData({userId: d.data.you.id, usersList: d.data.room.users})
 }
 
@@ -85,7 +99,20 @@ function sendToServer(data) {
         socket.send(JSON.stringify(data));
 }
 
-function handleControl(msg) {
+function handleControl(msg, sender) {
+    if (msg.from === 'server') {
+        switch (msg.action) {
+            case 'play':
+                noification('notificationOnPlay', sender.username);
+                break;
+            case 'pause':
+                noification('notificationOnPause', [sender.username, msg.at.toString()]);
+                break;
+            case 'seek':
+                noification('notificationOnSeek', [sender.username, msg.to.toString()]);
+                break;
+        }
+    }
     if (msg.from !== 'content') sendToContent(msg);
     if (msg.from !== 'server') sendToServer({action: msg});
     delete msg.from;
