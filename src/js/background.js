@@ -192,7 +192,7 @@ chrome.extension.onConnect.addListener(function(port) {
                 break;
             case 'selectCurrentTab':
                 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    setData({selectedTab: tabs[0]})
+                    if (tabs[0]) setData({selectedTab: tabs[0]})
                 });
                 break;
             case 'getData':
