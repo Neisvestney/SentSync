@@ -8,7 +8,7 @@
     </div>
     <div class="form-group">
       <label>{{ $t("tabs.tab") }}</label>
-      <p v-if="selectedTab">{{ selectedTab.title }}</p>
+      <p v-if="selectedTab === {}">{{ selectedTab.title }}</p>
       <p v-else>{{ $t("tabs.notselected") }}</p>
       <button :disabled="!userIsHost" @click="post({action: 'selectCurrentTab'})">{{ $t("tabs.select") }}</button>
     </div>
