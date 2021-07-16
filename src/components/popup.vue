@@ -10,7 +10,7 @@
       <label>{{ $t("tabs.tab") }}</label>
       <p v-if="selectedTab">{{ selectedTab.title }}</p>
       <p v-else>{{ $t("tabs.notselected") }}</p>
-      <button @click="post({action: 'selectCurrentTab'})">{{ $t("tabs.select") }}</button>
+      <button :disabled="!userIsHost" @click="post({action: 'selectCurrentTab'})">{{ $t("tabs.select") }}</button>
     </div>
 
     <div v-if="!isConnected" class="connection">
@@ -79,6 +79,7 @@ export default {
       seekTo: 0,
       username: null,
       userId: null,
+      userIsHost: null,
       room: null,
       serverUrl: null,
       isConnected: false,
@@ -118,6 +119,7 @@ export default {
       if (msg.data) {
         this.username = msg.data.username;
         this.userId = msg.data.userId;
+        this.userIsHost = msg.data.userIsHost;
         this.room = msg.data.room;
         this.serverUrl = msg.data.serverUrl;
         this.isConnected = msg.data.isConnected;

@@ -8,24 +8,51 @@ Object.filter = (obj, predicate) =>
 let data = {
     username: 'User' + Math.random(),
     userId: null,
+    userIsHost: null,
     room: '',
     serverUrl: 'wss://sentsync.senteristeam.ru',
     isConnected: false,
     isConnecting: false,
     error: null,
-    selectedTab: null,
+    selectedTab: {},
     usersList: [],
+    tabUrl: null,
 
     showNotifications: true,
 };
 
-let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab', 'userId'];
+let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab', 'userId', 'tabUrl', 'userIsHost'];
 
 let popupPort;
+
+function openOrCreateTab(url) {
+    chrome.tabs.query({url}, function(tabs) {
+        console.log(tabs);
+        if (tabs.length > 0) {
+            chrome.tabs.update(tabs[0].id, { active: true });
+            setData({selectedTab: tabs[0]});
+        }
+        else {
+            chrome.tabs.create({ url }, (t) => setData({selectedTab: t}));
+        }
+    });
+}
 
 function setData(newData, sentToPopup = true) {
     if (newData.username !== data.username && data.isConnected && newData.username)
         sendToServer({cmd: {action: 'setData', username: newData.username}});
+
+    if (newData.selectedTab && newData.selectedTab.url !== data.selectedTab.url && data.isConnected) {
+        sendToServer({cmd: {action: 'setData', tabUrl: newData.selectedTab.url}});
+        console.log(newData.selectedTab)
+    }
+
+    if (newData.tabUrl && newData.tabUrl !== data.tabUrl) {
+        if (!{...data, ...newData}.userIsHost) {
+            log("Opening new url: ", newData.tabUrl);
+            openOrCreateTab(newData.tabUrl);
+        }
+    }
 
     data = {...data, ...newData};
     log('New data saved: ', data);
@@ -80,12 +107,12 @@ function onSocketMessage(event) {
     let d = JSON.parse(event.data);
 
     if (d.action && d.sender.id !== data.userId) handleControl(d.action, d.sender);
-    if (d.data) setData({userId: d.data.you.id, usersList: d.data.room.users})
+    if (d.data) setData({userId: d.data.you.id, userIsHost: d.data.you.isHost, usersList: d.data.room.users, tabUrl: d.data.room.tabUrl})
 }
 
 function onSocketClose(event) {
     warn(`Disconnected from server`, event);
-    setData({userId: null, isConnected: false, isConnecting: false, error: event.code === 1000 ? null : 'network', usersList: []});
+    setData({userId: null, userIsHost: null, isConnected: false, isConnecting: false, selectedTab: {}, tabUrl: null, error: event.code === 1000 ? null : 'network', usersList: []});
 }
 
 function onSocketError(event) {
@@ -129,6 +156,13 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse){
             case 'seek':
                 handleControl(msg);
                 break;
+            case 'refreshTab':
+                if (data.selectedTab) {
+                    chrome.tabs.get(data.selectedTab.id, function(tab) {
+                        setData({selectedTab: tab})
+                    });
+                }
+                break;
         }
     }
 });
@@ -164,6 +198,7 @@ chrome.extension.onConnect.addListener(function(port) {
             case 'getData':
                 port.postMessage({data: data});
                 popupPort = port;
+                popupPort.onDisconnect.addListener(() => (popupPort = null));
                 break;
             case 'setData':
                 let newData = {...data, ...msg.data};

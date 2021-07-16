@@ -57,6 +57,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 $(document).ready(() => {
+    post({action: 'refreshTab'});
+
     $("body").bind("DOMSubtreeModified", () => {
         if (!video) {
             video = $('video')[0];
