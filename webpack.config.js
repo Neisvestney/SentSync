@@ -8,6 +8,7 @@ module.exports = {
         popup: './src/js/popup.js',
         background: './src/js/background.js',
         contentScript: './src/js/contentScript.js',
+        inviteScript: './src/js/inviteScript.js',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

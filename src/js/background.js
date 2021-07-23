@@ -94,6 +94,17 @@ function noification(msg, addition) {
     }
 }
 
+function connect(port) {
+    setData({isConnecting: true, error: null}, false);
+    if (port) port.postMessage({data: data});
+
+    socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/`);
+    socket.onopen = onSocketOpen;
+    socket.onmessage = onSocketMessage;
+    socket.onclose = onSocketClose;
+    socket.onerror = onSocketError;
+}
+
 let socket;
 
 function onSocketOpen(e) {
@@ -146,10 +157,22 @@ function handleControl(msg, sender) {
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse){
-    sendResponse('OK');
-
     log(`Received message from content (tab id: ${sender.tab.id}): `, msg);
-    if (data.selectedTab && sender.tab.id === data.selectedTab.id)  {
+
+    if (msg.connectTo) {
+        log('Attempt to connect to', msg.connectTo);
+
+        if (!data.isConnected) {
+            sendResponse('OK');
+            setData({room: msg.connectTo.code});
+            connect(popupPort);
+        } else {
+            sendResponse('ALREADY_CONNECTED');
+        }
+    }
+
+    if (data.selectedTab && sender.tab.id === data.selectedTab.id && msg.action)  {
+        sendResponse('OK');
         switch (msg.action) {
             case 'pause':
             case 'play':
@@ -178,14 +201,7 @@ chrome.extension.onConnect.addListener(function(port) {
                 handleControl(msg);
                 break;
             case 'connect':
-                setData({isConnecting: true, error: null}, false);
-                port.postMessage({data: data});
-
-                socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/`);
-                socket.onopen = onSocketOpen;
-                socket.onmessage = onSocketMessage;
-                socket.onclose = onSocketClose;
-                socket.onerror = onSocketError;
+                connect(port);
                 break;
             case 'disconnect':
                 socket.close();

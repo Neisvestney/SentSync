@@ -135,4 +135,4 @@ export default {
 }
 </script>
 
-<style lang="scss" src="../styles/popup.scss"></style>
+<style lang="scss" src="../styles/styles.scss"></style>
