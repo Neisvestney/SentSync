@@ -28,18 +28,57 @@ body {
 h1 {
   @extend .offsets;
   font-weight: normal;
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 a {
   color: $secondary;
 }
 
-p.danger {
+p {
   @extend .offsets;
-  padding: 10px;
-  font-size: 14px;
-  border: 2px solid $danger;
-  color: $danger;
+
+  &.danger {
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid $danger;
+    color: $danger;
+  }
+
+  &.normal {
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid $primary;
+    color: $primary;
+  }
+}
+
+button {
+  border: 2px solid $primary;
+  border-radius: 0;
+  background: $background;
+  color: $primary;
+
+  &:hover {
+    color: $secondary;
+
+    &.danger {
+      color: $danger;
+    }
+  }
+
+  &:active {
+    background: $primary;
+  }
+
+  &:disabled {
+    color: $disabled;
+  }
+
+  &.big {
+    font-size: 18px;
+  }
 }
 
 .footer {
@@ -141,25 +180,5 @@ p.danger {
     position: absolute;
     bottom: -10px;
     right: 5px;
-    border: 2px solid $primary;
-    border-radius: 0;
-    background: $background;
-    color: $primary;
-
-    &:hover {
-      color: $secondary;
-
-      &.danger {
-        color: $danger;
-      }
-    }
-
-    &:active {
-      background: $primary;
-    }
-
-    &:disabled {
-      color: $disabled;
-    }
   }
 }
