@@ -53,5 +53,27 @@
         "example" : "01:00"
       }
     }
+  },
+
+  "notificationOnNewUser": {
+    "message": "$PERSON$ has been connected to party",
+    "description": "On new user",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      }
+    }
+  },
+
+  "notificationOnUserDisconnected": {
+    "message": "$PERSON$ has been disconnected",
+    "description": "On user disconnected",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      }
+    }
   }
 }

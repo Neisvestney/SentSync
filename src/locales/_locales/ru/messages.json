@@ -43,5 +43,27 @@
         "example" : "01:00"
       }
     }
+  },
+
+  "notificationOnNewUser": {
+    "message": "$PERSON$ присоединился к вам",
+    "description": "On new user",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      }
+    }
+  },
+
+  "notificationOnUserDisconnected": {
+    "message": "$PERSON$ отключился от комнаты",
+    "description": "On user disconnected",
+    "placeholders": {
+      "person" : {
+        "content" : "$1",
+        "example" : "User"
+      }
+    }
   }
 }

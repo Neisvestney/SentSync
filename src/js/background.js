@@ -60,6 +60,18 @@ function setData(newData, sentToPopup = true) {
         }
     }
 
+    if ({...data, ...newData}.isConnected && newData.usersList && data.usersList) {
+        let newUsers = newData.usersList.filter(x => !data.usersList.some(u => x.id === u.id));
+        let disconnectedUsers = data.usersList.filter(x => !newData.usersList.some(u => x.id === u.id));
+
+        for (const newUser of newUsers) {
+            if (data.userId && newUser.id != data.userId) noification('notificationOnNewUser', [newUser.username])
+        }
+        for (const disconnectedUser of disconnectedUsers) {
+            if (data.userId && disconnectedUser.id != data.userId) noification('notificationOnUserDisconnected', [disconnectedUser.username])
+        }
+    }
+
     data = {...data, ...newData};
     log('New data saved: ', data);
     chrome.storage.sync.set(Object.filter(data, (o, k) => !notToSave.includes(k))); // Saving data to storage
@@ -150,10 +162,10 @@ function handleControl(msg, sender) {
                 noification('notificationOnPlay', sender.username);
                 break;
             case 'pause':
-                noification('notificationOnPause', [sender.username, msg.at.toString()]);
+                noification('notificationOnPause', [sender.username, new Date(msg.at * 1000).toISOString().substr(11, 12)]);
                 break;
             case 'seek':
-                noification('notificationOnSeek', [sender.username, msg.to.toString()]);
+                noification('notificationOnSeek', [sender.username, new Date(msg.to * 1000).toISOString().substr(11, 12)]);
                 break;
         }
     }
