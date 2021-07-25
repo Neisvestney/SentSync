@@ -27,13 +27,19 @@ let popupPort;
 
 function openOrCreateTab(url) {
     chrome.tabs.query({url}, function(tabs) {
-        console.log(tabs);
         if (tabs.length > 0) {
             chrome.tabs.update(tabs[0].id, { active: true });
             setData({selectedTab: tabs[0]});
         }
         else {
-            chrome.tabs.create({ url }, (t) => setData({selectedTab: t}));
+            if (data.selectedTab && data.selectedTab.id) {
+                chrome.tabs.get(data.selectedTab.id, function (tab) {
+                    if (tab) chrome.tabs.update(tab.id, {url: url}).then(t => setData({selectedTab: t}));
+                    else chrome.tabs.create({url}, (t) => setData({selectedTab: t}));
+                });
+            } else {
+                chrome.tabs.create({url}, (t) => setData({selectedTab: t}));
+            }
         }
     });
 }
@@ -211,6 +217,8 @@ chrome.extension.onConnect.addListener(function(port) {
                     if (tabs[0]) setData({selectedTab: tabs[0]})
                 });
                 break;
+            case 'openTab':
+                openOrCreateTab(data.tabUrl);
             case 'getData':
                 port.postMessage({data: data});
                 popupPort = port;

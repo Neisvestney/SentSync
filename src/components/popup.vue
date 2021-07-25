@@ -9,8 +9,10 @@
     <div class="form-group">
       <label>{{ $t("tabs.tab") }}</label>
       <p v-if="Object.keys(selectedTab).length > 0">{{ selectedTab.title }}</p>
+      <p v-else-if="tabUrl">{{ tabUrl }}</p>
       <p v-else>{{ $t("tabs.notselected") }}</p>
-      <button :disabled="!userIsHost" @click="post({action: 'selectCurrentTab'})">{{ $t("tabs.select") }}</button>
+      <button v-if="!isConnected || userIsHost" :disabled="!userIsHost" @click="post({action: 'selectCurrentTab'})">{{ $t("tabs.select") }}</button>
+      <button v-else :disabled="!tabUrl" @click="post({action: 'openTab'})">{{ $t("tabs.open") }}</button>
     </div>
 
     <div v-if="!isConnected" class="connection">
@@ -90,6 +92,7 @@ export default {
       isConnecting: false,
       error: null,
       selectedTab: null,
+      tabUrl: null,
       usersList: [],
 
       showNotifications: true,
@@ -138,6 +141,7 @@ export default {
         this.isConnecting = msg.data.isConnecting;
         this.error = msg.data.error;
         this.selectedTab = msg.data.selectedTab;
+        this.tabUrl = msg.data.tabUrl;
         this.usersList = msg.data.usersList;
         this.showNotifications = msg.data.showNotifications;
       }
