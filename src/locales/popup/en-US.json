@@ -17,7 +17,9 @@
   },
   "room": {
     "code": "Room code",
-    "enter": "Room"
+    "copy": "Copy room code",
+    "enter": "Room",
+    "link": "Create invite link"
   },
   "tabs": {
     "notselected": "Not selected",

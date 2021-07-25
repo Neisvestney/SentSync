@@ -23,7 +23,11 @@
     <div v-else class="connection">
       <div class="form-group">
         <label>{{ $t("room.code") }}</label>
-        <p>{{ room }}</p>
+        <p>
+          {{ room }}
+          <button :title="$t('room.copy')" @click="copyCode" class="small"><i class="icon copy"></i></button>
+          <button :title="$t('room.link')" @click="copyInvite" class="small"><i class="icon link"></i></button>
+        </p>
         <button @click="post({action: 'disconnect'})" class="danger">{{ $t("network.disconnect") }}</button>
       </div>
       <div v-if="usersList.length > 0" class="form-group">
@@ -93,7 +97,15 @@ export default {
   },
   methods: {
     post(data) {
+      console.log('post')
       this.port.postMessage(data);
+    },
+    copyCode() {
+      navigator.clipboard.writeText(this.room)
+    },
+    copyInvite() {
+      const url = `${this.serverUrl.replace('ws://', 'http://').replace('wss://', 'https://')}/invite/${this.room}/`;
+      navigator.clipboard.writeText(url)
     }
   },
   watch: {
