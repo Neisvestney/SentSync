@@ -116,7 +116,7 @@ function connect(port) {
     setData({isConnecting: true, error: null}, false);
     if (port) port.postMessage({data: data});
 
-    socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/`);
+    socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/?u=${data.username}`);
     socket.onopen = onSocketOpen;
     socket.onmessage = onSocketMessage;
     socket.onclose = onSocketClose;
@@ -128,7 +128,6 @@ let socket;
 function onSocketOpen(e) {
     log("Connected");
     setData({isConnected: true, isConnecting: false, error: null});
-    sendToServer({cmd: {action: 'setData', username: data.username}});
 }
 
 function onSocketMessage(event) {

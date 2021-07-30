@@ -35,7 +35,8 @@
       <div v-if="usersList.length > 0" class="form-group">
         <label>{{ $t("users.title") }}</label>
         <ul>
-          <li v-for="user in usersList">{{ user.username }}
+          <li v-for="user in usersList">
+            {{ user.username }}
             <span :title="$t('users.you')" v-if="user.id === userId">⍚</span>
             <span :title="$t('users.host')" v-if="user.isHost">☆</span>
           </li>
