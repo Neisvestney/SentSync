@@ -116,7 +116,7 @@ function connect(port) {
     setData({isConnecting: true, error: null}, false);
     if (port) port.postMessage({data: data});
 
-    socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/?u=${data.username}`);
+    socket = new WebSocket(`${data.serverUrl}/ws/room/${data.room}/?u=${encodeURI(data.username)}`);
     socket.onopen = onSocketOpen;
     socket.onmessage = onSocketMessage;
     socket.onclose = onSocketClose;
