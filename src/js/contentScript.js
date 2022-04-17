@@ -1,14 +1,19 @@
 const {log} = require("./log");
+const {verbose} = require("nodemon/lib/config/defaults");
 
 log("Connected to dom");
 
 let video = null;
+let videoSelecting = false;
+let previousElement = null;
+let overlay = null;
 
 const port = chrome.extension.connect({
     name: "Communication"
 });
 
 let fromOutside = false;
+
 function isOutside() {
     if (fromOutside) {
         fromOutside = false;
@@ -52,6 +57,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 log('Video seek to', message.to);
                 video.currentTime = parseFloat(message.to);
                 break;
+            case 'selectVideoPlayer':
+                log('Requested video select!');
+                videoSelecting = true;
+                break;
+            case 'updateVideo':
+                fromOutside = false;
+                post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
+                break;
         }
     }
 });
@@ -67,6 +80,60 @@ $(document).ready(() => {
                 video.addEventListener('play', (e) => post({action: 'play', from: 'content'}));
                 video.addEventListener('seeked', (e) => post({action: 'seek', to: video.currentTime, from: 'content'}));
                 log('Video founded!', video);
+                post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
+            }
+        }
+    });
+
+    $("body").mousemove((event) => {
+        if (videoSelecting) {
+            let x = event.clientX, y = event.clientY;
+            let elements = document.elementsFromPoint(x, y);
+            let found = false;
+            for (const element of elements) {
+                // log(element.tagName)
+                if (element.tagName.toLowerCase() === "video") {
+                    if (previousElement !== element) {
+                        if (overlay) {
+                            overlay.remove();
+                            overlay = null;
+                        }
+
+                        let o = document.createElement("div");
+                        $(o).css("position", "absolute");
+                        $(o).css("z-index", "9999");
+                        let rect = element.getBoundingClientRect();
+                        $(o).css("top", rect.top);
+                        $(o).css("left", rect.left);
+                        $(o).css("width", rect.width);
+                        $(o).css("height", rect.height);
+                        $(o).css("background", "red");
+
+                        document.body.appendChild(o);
+                        overlay = o;
+                        previousElement = element;
+
+                        $(o).click(() => {
+                            video = previousElement;
+                            log("Selected: ", previousElement);
+
+                            fromOutside = false;
+                            post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
+
+                            videoSelecting = false;
+                            overlay.remove();
+                            overlay = null;
+                            previousElement = null;
+                        });
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if (previousElement && !found) {
+                overlay.remove();
+                overlay = null;
+                previousElement = null;
             }
         }
     });

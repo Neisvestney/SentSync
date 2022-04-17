@@ -10,18 +10,19 @@ let data = {
     userId: null,
     userIsHost: null,
     room: '',
-    serverUrl: 'wss://sentsync.senteristeam.ru',
+    serverUrl: 'ws://185.246.64.188:8003',
     isConnected: false,
     isConnecting: false,
     error: null,
     selectedTab: {},
     usersList: [],
     tabUrl: null,
+    videoPlayer: null,
 
     showNotifications: true,
 };
 
-let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab', 'userId', 'tabUrl', 'userIsHost'];
+let notToSave = ['isConnected', 'isConnecting', 'isConnecting', 'selectedTab', 'userId', 'tabUrl', 'userIsHost', 'videoPlayer'];
 
 let popupPort;
 
@@ -50,7 +51,7 @@ function setData(newData, sentToPopup = true) {
 
     if (newData.selectedTab && newData.selectedTab.url !== data.selectedTab.url && data.isConnected) {
         sendToServer({cmd: {action: 'setData', tabUrl: newData.selectedTab.url}});
-        console.log(newData.selectedTab)
+        console.log(newData.selectedTab);
     }
 
     if (newData.tabUrl && newData.tabUrl !== data.tabUrl) {
@@ -79,6 +80,10 @@ function setData(newData, sentToPopup = true) {
 
     if (data.isConnected && data.selectedTab) chrome.browserAction.setIcon({path: '16x16.png'}); // Changing icon
     else chrome.browserAction.setIcon({path: '16x16_disabled.png'});
+
+    if (!data.videoPlayer) {
+        sendToContent({action: 'updateVideo'});
+    }
 }
 
 chrome.storage.sync.get(Object.keys(data), function(result) {
@@ -203,6 +208,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse){
                     });
                 }
                 break;
+            case 'setData':
+                let newData = {...data, ...msg.data};
+                setData(newData, true);
+                break;
         }
     }
 });
@@ -225,11 +234,18 @@ chrome.extension.onConnect.addListener(function(port) {
                 break;
             case 'selectCurrentTab':
                 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    if (tabs[0]) setData({selectedTab: tabs[0]})
+                    if (tabs[0]) {
+                        setData({selectedTab: tabs[0]})
+                        sendToContent({action: 'updateVideo'});
+                    }
                 });
                 break;
             case 'openTab':
                 openOrCreateTab(data.tabUrl);
+                break;
+            case 'selectVideoPlayer':
+                sendToContent({action: 'selectVideoPlayer'});
+                break;
             case 'getData':
                 port.postMessage({data: data});
                 popupPort = port;

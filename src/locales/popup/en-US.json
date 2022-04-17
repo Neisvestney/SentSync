@@ -15,6 +15,11 @@
     "connect": "Connect",
     "disconnect": "Disconnect"
   },
+  "player": {
+    "notselected": "Not selected",
+    "select": "Select",
+    "title": "Video player"
+  },
   "room": {
     "code": "Room code",
     "copy": "Copy room code",

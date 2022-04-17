@@ -14,6 +14,12 @@
       <button v-if="!isConnected || userIsHost" :disabled="!userIsHost" @click="post({action: 'selectCurrentTab'})">{{ $t("tabs.select") }}</button>
       <button v-else :disabled="!tabUrl" @click="post({action: 'openTab'})">{{ $t("tabs.open") }}</button>
     </div>
+    <div class="form-group">
+      <label>{{ $t("player.title") }}</label>
+      <p v-if="videoPlayer">{{ videoPlayer }}</p>
+      <p v-else>{{ $t("player.notselected") }}</p>
+      <button :disabled="!isConnected || !tabUrl" @click="post({action: 'selectVideoPlayer'})">{{ $t("player.select") }}</button>
+    </div>
 
     <div v-if="!isConnected" class="connection">
       <div class="form-group">
@@ -94,6 +100,7 @@ export default {
       error: null,
       selectedTab: null,
       tabUrl: null,
+      videoPlayer: null,
       usersList: [],
 
       showNotifications: true,
@@ -143,6 +150,7 @@ export default {
         this.error = msg.data.error;
         this.selectedTab = msg.data.selectedTab;
         this.tabUrl = msg.data.tabUrl;
+        this.videoPlayer = msg.data.videoPlayer;
         this.usersList = msg.data.usersList;
         this.showNotifications = msg.data.showNotifications;
       }
