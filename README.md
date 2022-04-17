@@ -19,5 +19,5 @@ Available in English / Доступно на русском языке
 # Development
 _The code for this extension is terrible because it's my first time developing such applications._ 
 - `npm i`
-- `npm start` for staring webpack with watcher 
-- `npm build` for build
+- `npm run start` for staring webpack with watcher 
+- `npm run build` for build
