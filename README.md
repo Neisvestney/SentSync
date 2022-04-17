@@ -2,14 +2,15 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Neisvestney/SentSync/Build?style=flat-square)](https://github.com/Neisvestney/SentSync/actions/workflows/build.yml)  
 Chrome extension for syncing video progress with your friends  
 [Demo video](https://youtu.be/nfwCOqp5eEk)  
-Available in English / Доступно на русском языке
-![](images/chrome_KM2w6dhN29.png)
+Available in English / Доступно на русском языке  
+
+![](images/chrome_KM2w6dhN29.png)  
 # Installing
 - Go to releases and download the latest build
 - Unpack extension somewhere
 - [Enable in your browser developer mode and load it](https://developer.chrome.com/docs/extensions/mv3/getstarted/#unpacked)
 # Using
-[Demo video](https://youtu.be/nfwCOqp5eEk)
+[Demo video](https://youtu.be/nfwCOqp5eEk)  
 - Connect to server using same `Room code`
 - Host press `Select current` to select tab and other clients automatically open the same tab
 - Start playing video
