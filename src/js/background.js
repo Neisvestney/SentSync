@@ -145,7 +145,7 @@ function onSocketMessage(event) {
 
 function onSocketClose(event) {
     warn(`Disconnected from server`, event);
-    setData({userId: null, userIsHost: null, isConnected: false, isConnecting: false, selectedTab: {}, tabUrl: null, error: event.code === 1000 ? null : 'network', usersList: []});
+    setData({userId: null, userIsHost: null, isConnected: false, isConnecting: false, selectedTab: {}, tabUrl: null, error: event.code === 1000 ? null : 'network', usersList: [], videoPlayer: null});
 }
 
 function onSocketError(event) {

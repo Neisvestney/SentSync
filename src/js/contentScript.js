@@ -7,6 +7,7 @@ let video = null;
 let videoSelecting = false;
 let previousElement = null;
 let overlay = null;
+let autoDetected = false;
 
 const port = chrome.extension.connect({
     name: "Communication"
@@ -63,7 +64,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 break;
             case 'updateVideo':
                 fromOutside = false;
-                post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
+                post({action: 'setData', data: {videoPlayer: autoDetected ? 'Auto detected' : 'Video'}, from: 'content'});
                 break;
         }
     }
@@ -92,7 +93,8 @@ $(document).ready(() => {
                 video.addEventListener('play', play);
                 video.addEventListener('seeked', seeked);
                 log('Video founded!', video);
-                post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
+                autoDetected = true;
+                post({action: 'setData', data: {videoPlayer: 'Auto detected'}, from: 'content'});
             }
         }
     });
@@ -134,13 +136,14 @@ $(document).ready(() => {
 
                             video = previousElement;
                             log("Selected: ", previousElement);
+                            autoDetected = false;
 
                             video.addEventListener('pause', pause);
                             video.addEventListener('play', play);
                             video.addEventListener('seeked', seeked);
 
                             fromOutside = false;
-                            post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
+                            post({action: 'setData', data: {videoPlayer: 'Video'}, from: 'content'});
 
                             videoSelecting = false;
                             overlay.remove();
