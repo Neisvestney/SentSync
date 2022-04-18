@@ -69,6 +69,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
+function pause() {
+    post({action: 'pause', at: video.currentTime, from: 'content'})
+}
+
+function play() {
+    post({action: 'play', from: 'content'})
+}
+
+function seeked() {
+    post({action: 'seek', to: video.currentTime, from: 'content'})
+}
+
 $(document).ready(() => {
     post({action: 'refreshTab'});
 
@@ -76,9 +88,9 @@ $(document).ready(() => {
         if (!video) {
             video = $('video')[0];
             if (video) {
-                video.addEventListener('pause', (e) => post({action: 'pause', at: video.currentTime, from: 'content'}));
-                video.addEventListener('play', (e) => post({action: 'play', from: 'content'}));
-                video.addEventListener('seeked', (e) => post({action: 'seek', to: video.currentTime, from: 'content'}));
+                video.addEventListener('pause', pause);
+                video.addEventListener('play', play);
+                video.addEventListener('seeked', seeked);
                 log('Video founded!', video);
                 post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
             }
@@ -114,8 +126,18 @@ $(document).ready(() => {
                         previousElement = element;
 
                         $(o).click(() => {
+                            if (video) {
+                                video.removeEventListener('pause', pause);
+                                video.removeEventListener('play', play);
+                                video.removeEventListener('seeked', seeked);
+                            }
+
                             video = previousElement;
                             log("Selected: ", previousElement);
+
+                            video.addEventListener('pause', pause);
+                            video.addEventListener('play', play);
+                            video.addEventListener('seeked', seeked);
 
                             fromOutside = false;
                             post({action: 'setData', data: {videoPlayer: 'video'}, from: 'content'});
